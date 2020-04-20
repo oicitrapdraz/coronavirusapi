@@ -89,11 +89,11 @@ Click headers to sort by column. Click on your state to see data including total
 </div>
 <div class="container">
   <h5>Total positive cases over time:</h5>
-  <%= line_chart @chart_pos, curve: false, xtitle: "Date", points: false, thousands: ",", library: {spanGaps: false, elements: {line: {tension: 0}, point: {radius: 0}}, pointRadius: 10, legend: {position: 'right',}, scales: {yAxes: [{id: 'y-axis', type: 'logarithmic'},]}} %>
+  <%= line_chart @chart_pos, curve: false, xtitle: "Date", points: false, thousands: ",", library: {spanGaps: false, elements: {line: {tension: 0}, point: {radius: 0}}, pointRadius: 10, legend: {position: 'right',}} %>
 </div>
 <div class="container">
   <h5>Total deaths over time:</h5>
-  <%= line_chart @chart_deaths, curve: false, xtitle: "Date", points: false, thousands: ",", library: {spanGaps: false, elements: {line: {tension: 0}, point: {radius: 0}}, pointRadius: 10, legend: {position: 'right',}, scales: {yAxes: [{id: 'y-axis', type: 'logarithmic'},]}} %>
+  <%= line_chart @chart_deaths, curve: false, xtitle: "Date", points: false, thousands: ",", library: {spanGaps: false, elements: {line: {tension: 0}, point: {radius: 0}}, pointRadius: 10, legend: {position: 'right',}} %>
 </div>
 <div class="container">
   <h5>Cases in top states over time (click on states in legend to select or deselect them):</h5>
