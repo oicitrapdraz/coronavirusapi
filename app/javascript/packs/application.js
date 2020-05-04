@@ -16,7 +16,7 @@ import $ from 'jquery';
 global.$ = jQuery;
 
 import 'bootstrap'
-import '../../assets/stylesheets/application.scss'
+
 
 
 // Uncomment to copy all static images under ../images to the output folder and reference
