@@ -1,31 +1,37 @@
 <script type="text/javascript">
-  $(document).ready(function() {
-    $('#fulltable').DataTable( { "paging": false, "searching": false, "order":[2, "desc"] });
-  });
+    $(document).ready(function() {
+        $('#fulltable').DataTable( { "paging": false, "searching": false, "order":[2, "desc"] });
+    });
 </script>
 <p id="notice"><%= notice %></p>
-<hr>
-<p>
-This page provides a record of official data from US government websites for the 50 states and DC.
-	All data provided here are direct crawls of state government websites. These
-	are the officially reported numbers. Unlike other coronavirus data sites, we do not rely on
-	news or human crowd-sourced data. These are automatic captures of official state websites.
-	The data captured will also be certified on the blockchain.
-	</p>
-<p><a href="mailto:coronavirusapi@googlegroups.com">Contact</a> for more info, or if you want to contribute to the project.
-</p>
+<section class="text">
+  <h1>Coronavirus API Public Health Initiative</h1>
+  <p>
+    This page provides a record of official data from US government websites for the 50 states and DC.
+    All data provided here are direct crawls of state government websites. These
+    are the officially reported numbers. Unlike other coronavirus data sites, we do not rely on
+    news or human crowd-sourced data. These are automatic captures of official state websites.
+    The data captured is in the process of being certified on the blockchain.
+  </p>
+  <p><a href="mailto:coronavirusapi@googlegroups.com">Contact</a> for more info, or if you want to contribute to the project.
+  </p>
 
-<p>To donate crypto, see the donation addresses at the bottom of the page. Thanks!
-</p>
+  <p>To donate crypto, see the donation addresses at the bottom of the page. Thanks!
+  </p>
+</section>
 
-<p>
-<h4>Latest <%= @unoffical_flag ? 'provisional' : 'official' %> COVID-19 data crawled from government websites</h4>
-</p>
-<p>
-Click headers to sort by column. Click on your state to see data including total tested over time, total positive cases over time, total deaths over time. Information to access API for each state to get time series is available on the state detail page.
-</p>
-<table id="fulltable" class="table table-sm table-bordered table-striped table-hover">
-  <thead>
+
+
+<section class="text">
+  <h2>Latest <%= @unoffical_flag ? 'provisional' : 'official' %> COVID-19 data crawled from government websites</h2>
+
+  <p>
+    Click headers to sort by column. Click on your state to see data including total tested over time, total positive cases over time, total deaths over time. Information to access API for each state to get time series is available on the state detail page.
+  </p>
+</section>
+<section class="fullscreen">
+  <table id="fulltable" class="table table-sm table-bordered table-striped table-hover">
+    <thead>
     <tr>
       <th>State</th>
       <th>Tested</th>
@@ -35,53 +41,57 @@ Click headers to sort by column. Click on your state to see data including total
       <th>Positive<br/>/Tested %</th>
       <th>Deaths<br/>/Positive %</th>
       <th>Deaths<br/>/1M People</th>
-<% if false %>
-      <th>Days to<br/>2x cases</th>
-      <th>Days to<br/>2x deaths</th>
-<% end %>
+      <% if false %>
+        <th>Days to<br/>2x cases</th>
+        <th>Days to<br/>2x deaths</th>
+      <% end %>
       <th>Source</th>
       <th>Last update<br/>(hours ago)</th>
     </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>USA</td>
-        <td><%= (@tested) %></td>
-        <td><%= (@positive) %></td>
-        <td><%= (@deaths) %></td>
-        <td><%= (@tested.to_f/@population['US']*1000000).round %></td>
-        <td><%= (@positive.to_f/@tested.to_f*1000).round.to_f/10 rescue 'N\A' %></td>
-        <td><%= (@deaths.to_f/@positive.to_f*1000).round.to_f/10 rescue 'N\A' %></td>
-        <td><%= (@deaths.to_f/@population['US']*10_000_000).round.to_f/10 rescue 'N\A' %></td>
-<% if false %>
+    </thead>
+    <tbody>
+    <tr>
+      <td>USA</td>
+      <td><%= (@tested) %></td>
+      <td><%= (@positive) %></td>
+      <td><%= (@deaths) %></td>
+      <td><%= (@tested.to_f/@population['US']*1000000).round %></td>
+      <td><%= (@positive.to_f/@tested.to_f*1000).round.to_f/10 rescue 'N\A' %></td>
+      <td><%= (@deaths.to_f/@positive.to_f*1000).round.to_f/10 rescue 'N\A' %></td>
+      <td><%= (@deaths.to_f/@population['US']*10_000_000).round.to_f/10 rescue 'N\A' %></td>
+      <% if false %>
         <td><%= @us_doubling_times[0] %></td>
         <td><%= @us_doubling_times[1] %></td>
-<% end %>
-        <td></td>
-        <td><%= ((Time.now-@timestamp)/360).round.to_f/10 %></td>
-      </tr>
-    <% @tested_arr.each do |state_name, tested| %>
+      <% end %>
+      <td></td>
+      <td><%= ((Time.now-@timestamp)/360).round.to_f/10 %></td>
+    </tr>
+
+      <% @tested_arr.each do |state_name, tested| %>
+
       <tr>
-	<td><a href="<%= "/state/#{state_name}" %>"><%= state_name %></a></td>
+        <td><a href="<%= "/state/#{state_name}" %>"><%= state_name %></a></td>
         <td><%= tested %> <%= "(#{@h_tested_unofficial[state_name]})" if false && @h_tested_unofficial[state_name].to_i > tested.to_i %> </td>
         <td><%= @h_positive[state_name] %> <%= "(#{@h_positive_unofficial[state_name]})" if false && @h_positive_unofficial[state_name].to_i > @h_positive[state_name].to_i %></td>
         <td><%= @h_deaths[state_name] %> <%= "(#{@h_deaths_unofficial[state_name]})" if false && @h_deaths_unofficial[state_name].to_i > @h_deaths[state_name].to_i %> </td>
         <td><%= (tested.to_f/@population[state_name]*1000000).round %>
-<%= "(#{(@h_tested_unofficial[state_name].to_f/@population[state_name]*1000000).round})" if false && @h_tested_unofficial[state_name].to_i > tested.to_i %>
-</td>
+          <%= "(#{(@h_tested_unofficial[state_name].to_f/@population[state_name]*1000000).round})" if false && @h_tested_unofficial[state_name].to_i > tested.to_i %>
+        </td>
         <td><%= (@h_positive[state_name].to_f/tested.to_f*1000).round.to_f/10 rescue 'N\A' %></td>
         <td><%= (@h_deaths[state_name].to_f/@h_positive[state_name].to_f*1000).round.to_f/10 rescue 'N\A' %></td>
         <td><%= (@h_deaths[state_name].to_f/@population[state_name]*10_000_000).round.to_f/10 %></td>
-<% if false %>
-        <td><%= @positive_doubling_time[state_name] %></td>
-        <td><%= @deaths_doubling_time[state_name] %></td>
-<% end %>
+        <% if false %>
+          <td><%= @positive_doubling_time[state_name] %></td>
+          <td><%= @deaths_doubling_time[state_name] %></td>
+        <% end %>
         <td><a href="<%= @url[state_name] %>"><%= state_name %></a></td>
-	<td><%= "#{((Time.now.to_i-@updated_at[state_name])/360).round.to_f/10}" %></td>
+        <td><%= "#{((Time.now.to_i-@updated_at[state_name])/360).round.to_f/10}" %></td>
       </tr>
     <% end %>
-  </tbody>
-</table>
+    </tbody>
+  </table>
+</section>
+
 
 <div class="container">
   <h5>Total number tested over time:</h5>
@@ -104,30 +114,16 @@ Click headers to sort by column. Click on your state to see data including total
   <%= line_chart @chart_states2, {thousands: ",", library: {elements: {line: {tension: 0}, point: {radius: 0}}, pointRadius: 0, legend: {position: 'right',}, scales: {yAxes: [{id: 'y-axis', type: 'logarithmic'},]}}} %>
 </div>
 
+<section class="text">
+  <p>
+  <h4>Download:</h4>
+  <a href="/states.csv">Official state data in csv format</a>
+  <br>
+  <a href="/time_series.csv">Time series in csv format</a>
+  </p>
 
-<p>
-<h4>Download:</h4>
-<a href="/states.csv">Official state data in csv format</a>
-<br>
-<a href="/time_series.csv">Time series in csv format</a>
-</p>
-
-<p>
-<h4>Api:</h4>
-To get the time series for a given state, use http://coronavirusapi.com/getTimeSeries/[2 letter state abbreviation]
-</p>
-
-<p>
-<h4>Donate:</h4>
-<p>
-BTC: 1LG9dUf39dCKAEFcKm6guNhadTJwNqj44J
-</p><p>
-BCH: qrf504gk8n6sujjegwastxqdz2lv5vlv65pxs03s7k
-</p><p>
-ETH: 0x549ffFB83ac67Ca1Ae47668ac3cAAE3e0c77a9bd
-</p><p>
-XLM: GCVRV67LBHTMVXKDAJSW3S3ASASI6EJWQU2LYEOGKPSJEY42PYRAUDME
-</p><p>
-VET: 0xa81cd7a8272E053A18a13459425FFd260105EDd9
-</p>
-</p>
+  <p>
+  <h4>Api:</h4>
+  To get the time series for a given state, use http://coronavirusapi.com/getTimeSeries/[2 letter state abbreviation]
+  </p>
+</section>

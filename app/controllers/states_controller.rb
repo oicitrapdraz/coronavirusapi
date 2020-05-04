@@ -2,14 +2,14 @@ class StatesController < ApplicationController
   before_action :set_state, only: [:show, :edit, :update, :destroy]
 
   STATE_COUNT = 51
-  H_POP = {"AL"=>4779736, "AK"=>710231, "AZ"=>6392017, "AR"=>2915918, "CA"=>37253956, "CO"=>5029196, "CT"=>3574097, 
-  	"DE"=>897934, "DC"=>601723, "FL"=>18801310, "GA"=>9687653, "HI"=>1360301, "ID"=>1567582, "IL"=>12830632, 
-  	"IN"=>6483802, "IA"=>3046355, "KS"=>2853118, "KY"=>4339367, "LA"=>4533372, "ME"=>1328361, "MD"=>5773552, 
-  	"MA"=>6547629, "MI"=>9883640, "MN"=>5303925, "MS"=>2967297, "MO"=>5988144, "MT"=>989415, "NE"=>1826341, 
-  	"NV"=>2700551, "NH"=>1316470, "NJ"=>8791894, "NM"=>2059179, "NY"=>19378102, "NC"=>9535483, "ND"=>672591, 
-  	"OH"=>11536504, "OK"=>3751351, "OR"=>3831074, "PA"=>12702379, "RI"=>1052567, "SC"=>4625364, "SD"=>814180, 
-  	"TN"=>6346165, "TX"=>25145561, "US"=>(308745538+3193694), "UT"=>2763885, "VT"=>625741, "VA"=>8001024, "WA"=>6724540, 
-  	"WV"=>1852994, "WI"=>5686986, "WY"=>563626, "PR" =>3193694 }
+  H_POP = {"AL"=>4779736, "AK"=>710231, "AZ"=>6392017, "AR"=>2915918, "CA"=>37253956, "CO"=>5029196, "CT"=>3574097,
+           "DE"=>897934, "DC"=>601723, "FL"=>18801310, "GA"=>9687653, "HI"=>1360301, "ID"=>1567582, "IL"=>12830632,
+           "IN"=>6483802, "IA"=>3046355, "KS"=>2853118, "KY"=>4339367, "LA"=>4533372, "ME"=>1328361, "MD"=>5773552,
+           "MA"=>6547629, "MI"=>9883640, "MN"=>5303925, "MS"=>2967297, "MO"=>5988144, "MT"=>989415, "NE"=>1826341,
+           "NV"=>2700551, "NH"=>1316470, "NJ"=>8791894, "NM"=>2059179, "NY"=>19378102, "NC"=>9535483, "ND"=>672591,
+           "OH"=>11536504, "OK"=>3751351, "OR"=>3831074, "PA"=>12702379, "RI"=>1052567, "SC"=>4625364, "SD"=>814180,
+           "TN"=>6346165, "TX"=>25145561, "US"=>(308745538+3193694), "UT"=>2763885, "VT"=>625741, "VA"=>8001024, "WA"=>6724540,
+           "WV"=>1852994, "WI"=>5686986, "WY"=>563626, "PR" =>3193694 }
   HOUR = 3600
   CACHE_OFFICIAL = 'state_summary_cache5'
   CACHE_UNOFFICIAL = 'state_summary_unofficial'
@@ -19,64 +19,64 @@ class StatesController < ApplicationController
   # run this after migration:
   #   # State.all.each {|s| [s.crawled_at=s.created_at, s.save]}
 
-DAY_SEC = 3600 * 24
-WEEK_SEC = DAY_SEC * 7
+  DAY_SEC = 3600 * 24
+  WEEK_SEC = DAY_SEC * 7
 
-def round10(x)
-  (x.to_f*10).round.to_f/10
-end
+  def round10(x)
+    (x.to_f*10).round.to_f/10
+  end
 
-def get_info_for(xs, ys)
-  y_log = ys.map {|y| Math.log((y>0 ? y : 1).to_f)}
-  lineFit = LineFit.new
-  lineFit.setData(xs.map{|x| x.to_f},y_log)
-  logIntercept,logSlope = lineFit.coefficients
-  doublingTime = Math.log(2.0)/logSlope
-  { "logSlope":logSlope, "doublingTime":doublingTime }
-end
+  def get_info_for(xs, ys)
+    y_log = ys.map {|y| Math.log((y>0 ? y : 1).to_f)}
+    lineFit = LineFit.new
+    lineFit.setData(xs.map{|x| x.to_f},y_log)
+    logIntercept,logSlope = lineFit.coefficients
+    doublingTime = Math.log(2.0)/logSlope
+    { "logSlope":logSlope, "doublingTime":doublingTime }
+  end
 
-def positive_doubling_time(st)
-  arr = State.where("name='#{st}' and official_flag=true").order(crawled_at: :desc)
-  week_ago = arr[0].crawled_at.to_i - WEEK_SEC
-  arr = arr.select {|i| i.crawled_at.to_i > week_ago }
-  h = {}
-  arr.each {|i| h[i.positive] = i.crawled_at.to_i} # remove duplicate values, use earliest date
-  arr = h.to_a.map {|v,t| [t, v]}.sort
-  return '...' if arr.size <= 3
-  xs = arr.map {|t,v| t}
-  ys = arr.map {|t,v| v}
-  round10(get_info_for(xs, ys)[:doublingTime]/DAY_SEC)
-end
+  def positive_doubling_time(st)
+    arr = State.where("name='#{st}' and official_flag=true").order(crawled_at: :desc)
+    week_ago = arr[0].crawled_at.to_i - WEEK_SEC
+    arr = arr.select {|i| i.crawled_at.to_i > week_ago }
+    h = {}
+    arr.each {|i| h[i.positive] = i.crawled_at.to_i} # remove duplicate values, use earliest date
+    arr = h.to_a.map {|v,t| [t, v]}.sort
+    return '...' if arr.size <= 3
+    xs = arr.map {|t,v| t}
+    ys = arr.map {|t,v| v}
+    round10(get_info_for(xs, ys)[:doublingTime]/DAY_SEC)
+  end
 
-def deaths_doubling_time(st)
-  arr = State.where("name='#{st}' and official_flag=true").order(crawled_at: :desc)
-  week_ago = arr[0].crawled_at.to_i - WEEK_SEC
-  arr = arr.select {|i| i.deaths && (i.crawled_at.to_i > week_ago) }
-  h = {}
-  arr.each {|i| h[i.deaths] = i.crawled_at.to_i} # remove duplicate values, use earliest date
-  arr = h.to_a.map {|v,t| [t, v]}.sort
-  return '...' if arr.size <= 3
-  xs = arr.map {|t,v| t}
-  ys = arr.map {|t,v| v}
-  round10(get_info_for(xs, ys)[:doublingTime]/DAY_SEC)
-end
+  def deaths_doubling_time(st)
+    arr = State.where("name='#{st}' and official_flag=true").order(crawled_at: :desc)
+    week_ago = arr[0].crawled_at.to_i - WEEK_SEC
+    arr = arr.select {|i| i.deaths && (i.crawled_at.to_i > week_ago) }
+    h = {}
+    arr.each {|i| h[i.deaths] = i.crawled_at.to_i} # remove duplicate values, use earliest date
+    arr = h.to_a.map {|v,t| [t, v]}.sort
+    return '...' if arr.size <= 3
+    xs = arr.map {|t,v| t}
+    ys = arr.map {|t,v| v}
+    round10(get_info_for(xs, ys)[:doublingTime]/DAY_SEC)
+  end
 
-def doubling_time_from_hash(hash, sec_ago = WEEK_SEC)
-  h={} 
-  t0 = Time.now.to_i - sec_ago
-  hash.to_a.sort.reverse.each {|t,v| h[v] = t if t.to_i > t0 } 
-  return nil if h.size <= 2
-  arr=h.to_a.map {|v,t| [t,v]}.sort 
-  xs = arr.map {|t,v| t} 
-  ys = arr.map {|t,v| v} 
-  round10(get_info_for(xs, ys)[:doublingTime]/DAY_SEC)
-end
+  def doubling_time_from_hash(hash, sec_ago = WEEK_SEC)
+    h={}
+    t0 = Time.now.to_i - sec_ago
+    hash.to_a.sort.reverse.each {|t,v| h[v] = t if t.to_i > t0 }
+    return nil if h.size <= 2
+    arr=h.to_a.map {|v,t| [t,v]}.sort
+    xs = arr.map {|t,v| t}
+    ys = arr.map {|t,v| v}
+    round10(get_info_for(xs, ys)[:doublingTime]/DAY_SEC)
+  end
 
   def state_detail
     if (@st = params['name'].to_s.upcase) && @st.size == 2
       @chart_tested = {}
       @chart_pos = {}
-      @chart_deaths = {}  
+      @chart_deaths = {}
       arr = State.where("official_flag is true and name='#{@st}'").order(:crawled_at).all.map do |i|
 
         @chart_tested[i.crawled_at] = i.tested
@@ -86,7 +86,7 @@ end
       end
       @timestamp, @tested, @positive, @deaths = arr[-1]
     else
-      render plain: 'invalid query'    
+      render plain: 'invalid query'
     end
   end
 
@@ -97,7 +97,7 @@ end
     @unoffical_flag = !!params['unofficial']
     @population = H_POP
     skip = false # skip cache
-    
+
     begin
       redis = Redis.new(host: "localhost")
       old = nil
@@ -111,29 +111,29 @@ end
       if (old && (old=eval(old)) && old.shift == @timestamp.to_s) || !params['reload']
         # load old data
         @updated_date,
-        @url,
-        @tested,
-        @positive,
-        @deaths,
-        @tested_unofficial,
-        @positive_unofficial,
-        @deaths_unofficial,
-        @chart_tested,
-        @chart_pos,
-        @chart_deaths,
-        @chart_states,
-        @chart_states2,
-        @tested_arr,
-        @h_positive,
-        @h_deaths,
-        @h_tested_unofficial,
-        @h_positive_unofficial,
-        @h_deaths_unofficial,
-        @dates_time_series,
-        @updated_at,
-        @positive_doubling_time,
-        @deaths_doubling_time,
-        @us_doubling_times = old
+            @url,
+            @tested,
+            @positive,
+            @deaths,
+            @tested_unofficial,
+            @positive_unofficial,
+            @deaths_unofficial,
+            @chart_tested,
+            @chart_pos,
+            @chart_deaths,
+            @chart_states,
+            @chart_states2,
+            @tested_arr,
+            @h_positive,
+            @h_deaths,
+            @h_tested_unofficial,
+            @h_positive_unofficial,
+            @h_deaths_unofficial,
+            @dates_time_series,
+            @updated_at,
+            @positive_doubling_time,
+            @deaths_doubling_time,
+            @us_doubling_times = old
         skip = true
       end
     rescue => e
@@ -155,10 +155,10 @@ end
       @deaths_doubling_time = {}
 
       states_list = if @unoffical_flag
-        State.all
-      else
-        State.all.where('official_flag is true')
-      end
+                      State.all
+                    else
+                      State.all.where('official_flag is true')
+                    end
       states_list.order(crawled_at: :asc).each do |s|
         curr_time = Time.at((s.crawled_at.to_i/HOUR)*HOUR).to_i # truncate to hour   
         @dates_time_series[curr_time] = true
@@ -180,7 +180,7 @@ end
           h_deaths_time[curr_time] = h_deaths_time[prev_time_deaths] - h_deaths_state[s.name] + s.deaths
           h_deaths_state[s.name] = s.deaths
           prev_time_deaths = curr_time
-        end  
+        end
       end # s 
       @tested_arr = h_tested_state.to_a.sort
       @h_positive = h_pos_state
@@ -197,8 +197,8 @@ end
       @chart_deaths = h_deaths_time
 
       @us_doubling_times = [
-        doubling_time_from_hash(@chart_pos),
-        doubling_time_from_hash(@chart_deaths)
+          doubling_time_from_hash(@chart_pos),
+          doubling_time_from_hash(@chart_deaths)
       ]
 
       names = @h_positive.to_a.sort {|a,b| b[1].to_i <=> a[1].to_i}.map {|i| i[0]}[0..9]
@@ -207,10 +207,10 @@ end
         h = {}
 
         states_list = if @unoffical_flag
-          State.all
-        else
-          State.all.where('official_flag is true')
-        end
+                        State.all
+                      else
+                        State.all.where('official_flag is true')
+                      end
         states_list.where("name='#{name}'").order(:crawled_at).map {|s| all_dates[x=s.crawled_at.to_date.to_s] = true; h[x] = s.positive }
         [name, h]
       end
@@ -236,10 +236,10 @@ end
         h = {}
 
         states_list = if @unoffical_flag
-          State.all
-        else
-          State.all.where('official_flag is true')
-        end
+                        State.all
+                      else
+                        State.all.where('official_flag is true')
+                      end
         states_list.where("name='#{name}'").order(:crawled_at).map {|s| all_dates[x=s.crawled_at.to_date.to_s] = true; h[x] = (s.positive.to_f/H_POP[name.upcase]*1000_000_0).round.to_f/10 }
         [name, h]
       end
@@ -281,14 +281,14 @@ end
         end
         if s.tested && s.tested > h_tested_state[s.name]
           h_tested_time[curr_time] = h_tested_time[prev_time_tested] - h_tested_state[s.name] + s.tested
-          h_tested_state[s.name] = s.tested 
+          h_tested_state[s.name] = s.tested
           prev_time_tested = curr_time
         end
         if s.deaths && s.deaths > h_deaths_state[s.name]
           h_deaths_time[curr_time] = h_deaths_time[prev_time_deaths] - h_deaths_state[s.name] + s.deaths
-          h_deaths_state[s.name] = s.deaths 
+          h_deaths_state[s.name] = s.deaths
           prev_time_deaths = curr_time
-        end 
+        end
       end # s
       @h_tested_unofficial = h_tested_state
       @h_positive_unofficial = h_pos_state
@@ -303,7 +303,7 @@ end
            @url,
            @tested,
            @positive,
-           @deaths, 
+           @deaths,
            @tested_unofficial,
            @positive_unofficial,
            @deaths_unofficial,
@@ -329,7 +329,7 @@ end
         redis.set(CACHE_OFFICIAL, x) rescue nil
       end
     end # unless skip
-    
+
     # fix time in 3 charts
     h = {}
     @chart_tested.each {|k,v| h[Time.at(k)]=v}
@@ -361,9 +361,9 @@ end
     data = @dates_time_series.keys.map do |t|
       s = Time.at(t).to_s
       t2 = Time.at t
-      [s[0..9], s[11..18], t, 
-       @chart_tested[t2] ? (tested=@chart_tested[t2]) : tested, 
-       @chart_pos[t2] ? (pos=@chart_pos[t2]) : pos, 
+      [s[0..9], s[11..18], t,
+       @chart_tested[t2] ? (tested=@chart_tested[t2]) : tested,
+       @chart_pos[t2] ? (pos=@chart_pos[t2]) : pos,
        @chart_deaths[t2] ? (deaths=@chart_deaths[t2]) : deaths]
     end
     attributes = %w{date time seconds_since_Epoch tested positive deaths}
@@ -405,10 +405,10 @@ end
 
   def get_time_series_json
     if (st = params['name']) && st.size < 3
-      arr = State.where("official_flag is true and name='#{st.upcase}'").order(:crawled_at).all.map do |i| 
+      arr = State.where("official_flag is true and name='#{st.upcase}'").order(:crawled_at).all.map do |i|
         { :seconds_since_epoch => i.crawled_at.to_i,
-          :tested => i.tested, 
-          :positive => i.positive, 
+          :tested => i.tested,
+          :positive => i.positive,
           :deaths => i.deaths
         }
       end
@@ -486,13 +486,13 @@ end
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_state
-      @state = State.find(params[:id])
-    end
-
-    # Only allow a list of trusted parameters through.
-    def state_params
-      params.require(:state).permit(:name, :tested, :positive, :deaths, :tested_crawl_date, :positive_crawl_date, :deaths_crawl_date, :tested_source, :positive_source, :deaths_source)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_state
+    @state = State.find(params[:id])
   end
+
+  # Only allow a list of trusted parameters through.
+  def state_params
+    params.require(:state).permit(:name, :tested, :positive, :deaths, :tested_crawl_date, :positive_crawl_date, :deaths_crawl_date, :tested_source, :positive_source, :deaths_source)
+  end
+end
