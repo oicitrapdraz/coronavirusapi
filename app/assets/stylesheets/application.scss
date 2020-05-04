@@ -13,7 +13,7 @@
  *= require_tree .
  *= require_self
  */
-@import "bootstrap/dist/css/bootstrap";
+//@import "bootstrap/dist/css/bootstrap";
 html {
   /* Prevent layout jumps when switching to a page where content is shorter than viewport. */
   overflow-y: scroll;
@@ -24,44 +24,6 @@ body {
   margin: 0px;
   padding: 10px 10px 10px 10px;
   min-height: 100vh;
-}
-
-h1 {
-  text-align: center;
-  line-height: 1.2em;
-  font-size: 2em;
-}
-h1.main-header {
-  margin-top: 0px;
-  margin-bottom: 30px;
-  margin-left: auto;
-  margin-right: auto;
-  max-width: 80%;
-}
-h2 {
-  line-height: 1.4em;
-  margin-bottom: 30px;
-
-}
-h3 {
-  line-height: 1.3em;
-  font-weight: normal;
-}
-h4 {
-  font-weight: normal;
-}
-h4, h5 {
-  font-size: 1.3em;
-  line-height: 1.2em;
-}
-td {
-  font-size: 0.8em;
-  line-height: 0.8em;
-}
-
-p, li {
-  font-size: 1.0em;
-  line-height: 1.4em;
 }
 
 .underline {
@@ -114,5 +76,251 @@ nav > a {
     justify-content: center;
   }
 }
+/* http://meyerweb.com/eric/tools/css/reset/
+   v2.0 | 20110126
+   License: none (public domain)
+*/
 
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+  display: block;
+}
+body {
+  line-height: 1;
+}
+ul {
+  list-style: none;
+}
+blockquote, q {
+  quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: '';
+  content: none;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+/* Style Merge from Richard */
+html {
+  --fg: #000;
+  --bg: #FFF;
+  --fx: #999999;
+  --bc: #E5E5E5;
+  --darkblue: #0F1424;
+  color: var(--fg);
+  background-color: var(--bg);
+  font-size: 130%;
+  line-height: 1.6em;
+  font-family: 'Source Sans Pro', sans-serif!important;
+  width: 100%;
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility; }
+
+body {
+  margin: 0em 0em; }
+
+section.hr {
+  margin: 3em 0em;
+  border-bottom: 1px solid var(--bc); }
+
+@media (max-width: 1200px) {
+  html {
+    font-size: 120%; } }
+
+@media (max-width: 900px) {
+  html {
+    font-size: 110%; } }
+
+@media (max-width: 600px) {
+  html {
+    font-size: 80%; } }
+
+h1 {
+  font-size: 200%;
+  line-height: 1.3em;
+  margin: 0;
+  padding: 0;
+  margin-bottom: 0.5em;
+  font-weight: 400; }
+
+h2 {
+  font-size: 150%;
+  line-height: 1.4em;
+  margin: 0;
+  padding: 0;
+  margin-bottom: 0.5em;
+  font-weight: 400; }
+
+h3 {
+  font-size: 100%;
+  line-height: 1.6em;
+  margin: 0;
+  padding: 0;
+  margin-bottom: 0.5em;
+  margin-top: 0.8em;
+  font-weight: 400; }
+
+b {
+  font-weight: 400; }
+
+p {
+  margin: auto;
+  padding-bottom: 1em; }
+
+a {
+  color: var(--fg); }
+a:hover {
+  color: var(--fx); }
+
+section.text {
+  margin: 0 auto;
+  max-width: 850px;
+  padding: 1em;
+  margin-top: 1em;
+  margin-bottom: 1em; }
+
+section.grid {
+  margin: 0 auto;
+  padding: 1em;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-gap: 1.5em; }
+
+@media (max-width: 900px) {
+  section.grid {
+    grid-template-columns: 1fr 1fr; } }
+
+@media (max-width: 600px) {
+  section.grid {
+    grid-template-columns: 1fr; } }
+
+section.fullscreen {
+  margin: 0 auto;
+  width: 100%;
+  margin-top: 1em;
+  margin-bottom: 1em; }
+section.fullscreen img {
+  width: 100%; }
+
+article.card {
+  padding: 2em;
+  margin: 0em;
+  box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.04);
+  overflow-wrap: break-word;
+  word-break: break-word; }
+article.card h3 {
+  margin: 0;
+  padding: 0; }
+article.card p {
+  margin: 0;
+  padding: 0; }
+
+table {
+  padding: 2em;
+  width: 100%;
+  font-size: 100%;
+  text-align: right; }
+table thead {
+  line-height: 1.2em; }
+table thead tr th {
+  border-bottom: 1px solid var(--bc);
+  padding-bottom: 0.5em;
+  vertical-align: bottom;
+  color: var(--fx);
+  font-weight: 400; }
+table thead tr th.left {
+  text-align: left; }
+table tbody {
+  padding: 10em !important; }
+
+table tbody td {
+  padding: 5px;
+}
+
+table tbody tr td.left {
+  text-align: left; }
+
+[hidden] {
+  display: none; }
+
+nav.navigation button {
+  border: none;
+  background-color: white;
+  outline: none;
+  padding: .3em;
+  margin: 0; }
+
+nav.navigation button svg {
+  width: 30px;
+  height: 30px;
+  //stroke-width: 2px;
+  //stroke: var(--fx);
+  }
+
+#menu {
+  list-style-type: none;
+  margin: 0;
+  padding: 1.3em; }
+#menu li a {
+  display: block;
+  text-decoration: none;
+  color: var(--fx);
+  border-bottom: 1px solid var(--bc);
+  padding: 1em 0em;
+  font-weight: 400; }
+#menu li a.active {
+  color: var(--fg); }
+#menu li a.logo {
+  font-weight: 600; }
+
+@media (min-width: 50rem) {
+  .navigation button {
+    display: none; }
+  #menu {
+    display: block;
+    list-style-type: none;
+    box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.08);
+    margin: 0em;
+    padding: 2em 3em; }
+  #menu li {
+    display: inline-block; }
+  #menu li a {
+    text-decoration: none;
+    border-bottom: none;
+    padding: 0em;
+    padding-right: 1.5em;
+    letter-spacing: 0.015em; } }
+
+.btn {
+  display: inline-block;
+  padding: 1em 2em;
+  margin-right: 1em;
+  margin-bottom: 1em;
+  border: 1px solid var(--bc); }
 

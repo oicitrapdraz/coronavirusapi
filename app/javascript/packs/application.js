@@ -25,3 +25,15 @@ import '/app/app/assets/stylesheets/application.scss'
 //
 // const images = require.context('../images', true)
 // const imagePath = (name) => images(name, true)
+$(document).on("turbolinks:load", function() {
+    console.log("Togglemenu Ready");
+    const toggleMenu = document.querySelector(".navigation button");
+    const menu = document.querySelector(".navigation ul");
+
+    toggleMenu.addEventListener("click", function () {
+        console.log("Togglemenu clicked");
+        const open = JSON.parse(toggleMenu.getAttribute("aria-expanded"));
+        toggleMenu.setAttribute("aria-expanded", !open);
+        menu.hidden = !menu.hidden;
+    });
+});
