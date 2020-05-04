@@ -5,7 +5,7 @@
 - Ruby 2.7.0 (if you have trouble switching ruby versions with Bundler, the application runs fine with Ruby 2.5.5 - just update the version locally in your Gemfile)
 - MySQL
 - Yarn (https://classic.yarnpkg.com/en/docs/install)
-- bundle (`gem install bundler`)
+- Bundler (`gem install bundler`)
 
 ### Setting up a development environment
 
