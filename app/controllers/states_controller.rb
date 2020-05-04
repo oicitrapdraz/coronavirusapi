@@ -96,6 +96,13 @@ class StatesController < ApplicationController
     # params['reload'], if set, refresh the cache
     @unoffical_flag = !!params['unofficial']
     @population = H_POP
+
+    # we have two population hashes, these latter ones are more recent census data. 
+    # will need to update H_POP calculations in future
+    # source is: https://www.census.gov/data/tables/time-series/demo/popest/2010s-state-total.html#par_textimage
+    @h_census_pop = {"US"=>328239523, "AL"=>4903185, "AK"=>731545, "AZ"=>7278717, "AR"=>3017804, "CA"=>39512223, "CO"=>5758736, "CT"=>3565287, "DE"=>973764, "DC"=>705749, "FL"=>21477737, "GA"=>10617423, "HI"=>1415872, "ID"=>1787065, "IL"=>12671821, "IN"=>6732219, "IA"=>3155070, "KS"=>2913314, "KY"=>4467673, "LA"=>4648794, "ME"=>1344212, "MD"=>6045680, "MA"=>6892503, "MI"=>9986857, "MN"=>5639632, "MS"=>2976149, "MO"=>6137428, "MT"=>1068778, "NE"=>1934408, "NV"=>3080156, "NH"=>1359711, "NJ"=>8882190, "NM"=>2096829, "NY"=>19453561, "NC"=>10488084, "ND"=>762062, "OH"=>11689100, "OK"=>3956971, "OR"=>4217737, "PA"=>12801989, "RI"=>1059361, "SC"=>5148714, "SD"=>884659, "TN"=>6829174, "TX"=>28995881, "UT"=>3205958, "VT"=>623989, "VA"=>8535519, "WA"=>7614893, "WV"=>1792147, "WI"=>5822434, "WY"=>578759, "PR"=>3193694}
+    @h_census_death = {"US"=>6754, "AL"=>130, "AK"=>11, "AZ"=>136, "AR"=>78, "CA"=>648, "CO"=>90, "CT"=>76, "DE"=>22, "DC"=>13, "FL"=>482, "GA"=>197, "HI"=>28, "ID"=>32, "IL"=>267, "IN"=>155, "IA"=>74, "KS"=>65, "KY"=>115, "LA"=>110, "ME"=>35, "MD"=>119, "MA"=>142, "MI"=>237, "MN"=>106, "MS"=>78, "MO"=>148, "MT"=>24, "NE"=>40, "NV"=>57, "NH"=>29, "NJ"=>184, "NM"=>44, "NY"=>389, "NC"=>220, "ND"=>16, "OH"=>293, "OK"=>99, "OR"=>88, "PA"=>331, "RI"=>25, "SC"=>117, "SD"=>19, "TN"=>165, "TX"=>469, "UT"=>42, "VT"=>14, "VA"=>164, "WA"=>136, "WV"=>57, "WI"=>127, "WY"=>12, "PR"=>75}
+
     skip = false # skip cache
 
     begin
