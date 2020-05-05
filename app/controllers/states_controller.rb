@@ -36,7 +36,7 @@ def get_info_for(xs, ys)
 end
 
 def positive_doubling_time(st)
-  arr = State.where("name='#{st}' and official_flag=true").order(crawled_at: :desc)
+  arr = State.is_official_and_name_is(st).order(crawled_at: :desc)
   week_ago = arr[0].crawled_at.to_i - WEEK_SEC
   arr = arr.select {|i| i.crawled_at.to_i > week_ago }
   h = {}
@@ -49,7 +49,7 @@ def positive_doubling_time(st)
 end
 
 def deaths_doubling_time(st)
-  arr = State.where("name='#{st}' and official_flag=true").order(crawled_at: :desc)
+  arr = State.is_official_and_name_is(st).order(crawled_at: :desc)
   week_ago = arr[0].crawled_at.to_i - WEEK_SEC
   arr = arr.select {|i| i.deaths && (i.crawled_at.to_i > week_ago) }
   h = {}
@@ -77,7 +77,7 @@ end
       @chart_tested = {}
       @chart_pos = {}
       @chart_deaths = {}  
-      arr = State.where("official_flag is true and name='#{@st}'").order(:crawled_at).all.map do |i|
+      arr = State.is_official_and_name_is(st).order(:crawled_at).map do |i|
 
         @chart_tested[i.crawled_at] = i.tested
         @chart_pos[i.crawled_at] = i.positive
@@ -105,7 +105,7 @@ end
         @timestamp = State.last.created_at
         old = redis.get(CACHE_UNOFFICIAL)
       else
-        @timestamp = State.where('official_flag is true').order(:crawled_at).last.crawled_at
+        @timestamp = State.is_official.order(:crawled_at).last.crawled_at
         old = redis.get(CACHE_OFFICIAL)
       end
       if (old && (old=eval(old)) && old.shift == @timestamp.to_s) || !params['reload']
@@ -157,7 +157,7 @@ end
       states_list = if @unoffical_flag
         State.all
       else
-        State.all.where('official_flag is true')
+        State.is_official
       end
       states_list.order(crawled_at: :asc).each do |s|
         curr_time = Time.at((s.crawled_at.to_i/HOUR)*HOUR).to_i # truncate to hour   
@@ -209,9 +209,9 @@ end
         states_list = if @unoffical_flag
           State.all
         else
-          State.all.where('official_flag is true')
+          State.is_official
         end
-        states_list.where("name='#{name}'").order(:crawled_at).map {|s| all_dates[x=s.crawled_at.to_date.to_s] = true; h[x] = s.positive }
+        states_list.where('name = ?', name).order(:crawled_at).map {|s| all_dates[x=s.crawled_at.to_date.to_s] = true; h[x] = s.positive }
         [name, h]
       end
       all_dates = all_dates.keys.sort
@@ -238,9 +238,9 @@ end
         states_list = if @unoffical_flag
           State.all
         else
-          State.all.where('official_flag is true')
+          State.is_official
         end
-        states_list.where("name='#{name}'").order(:crawled_at).map {|s| all_dates[x=s.crawled_at.to_date.to_s] = true; h[x] = (s.positive.to_f/H_POP[name.upcase]*1000_000_0).round.to_f/10 }
+        states_list.where('name = ?', name).order(:crawled_at).map {|s| all_dates[x=s.crawled_at.to_date.to_s] = true; h[x] = (s.positive.to_f/H_POP[name.upcase]*1000_000_0).round.to_f/10 }
         [name, h]
       end
       all_dates = all_dates.keys.sort
@@ -377,7 +377,7 @@ end
   end
 
   def export_all
-    data = State.where('official_flag is true').order(:crawled_at).all.map {|s| [s.crawled_at.to_i, s.name, s.tested, s.positive, s.deaths]}
+    data = State.is_official.order(:crawled_at).map {|s| [s.crawled_at.to_i, s.name, s.tested, s.positive, s.deaths]}
     attributes = %w{seconds_since_Epoch state tested positive deaths}
     out = CSV.generate(headers: true) do |csv|
       csv << attributes
@@ -391,7 +391,7 @@ end
   def get_time_series
     if (st = params['name']) && st.size < 3
       s = "seconds_since_Epoch,tested,positive,deaths\n"
-      arr = State.where("official_flag is true and name='#{st.upcase}'").order(:crawled_at).all.map {|i| [i.crawled_at.to_i, i.tested, i.positive, i.deaths].join(",")}
+      arr = State.is_official_and_name_is(st.upcase).order(:crawled_at).map {|i| [i.crawled_at.to_i, i.tested, i.positive, i.deaths].join(",")}
       if arr.size == 0
         s = "#{st} not found"
       else
@@ -405,7 +405,7 @@ end
 
   def get_time_series_json
     if (st = params['name']) && st.size < 3
-      arr = State.where("official_flag is true and name='#{st.upcase}'").order(:crawled_at).all.map do |i| 
+      arr = State.is_official_and_name_is(st.upcase).order(:crawled_at).map do |i|
         { :seconds_since_epoch => i.crawled_at.to_i,
           :tested => i.tested, 
           :positive => i.positive, 
