@@ -1,3 +1,5 @@
+shared/pids/unicorn.pid
+
 all*.csv
 .browserslistrc
 .ruby-version

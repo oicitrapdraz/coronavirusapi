@@ -1,5 +1,5 @@
 <p id="notice"><%= notice %></p>
-<hr>
+<section class="text">
 <p> This page provides a record of official data from the <%= @st %> government website.
 	All data provided here are direct crawls from the website. These
 	are the officially reported numbers. Unlike other coronavirus data sites, we do not rely on
@@ -34,7 +34,7 @@ Official COVID-19 counts for <%= @st %>
   </tbody>
 </table>
 </p>
-
+</section>
 <div class="container">
 	<h5>Total number tested over time:</h5>
   <%= line_chart @chart_tested, curve: false, xtitle: "Date", points: false, thousands: "," %>
@@ -47,22 +47,23 @@ Official COVID-19 counts for <%= @st %>
   <h5>Total deaths over time:</h5>
   <%= line_chart @chart_deaths, curve: false, xtitle: "Date", points: false, thousands: ",", library: {spanGaps: false, elements: {line: {tension: 0}, point: {radius: 0}}, pointRadius: 10, legend: {position: 'right',}} %>
 </div>
-
-<p>
-<h4>Api:</h4>
-To get the time series for <%= @st %>, use <a href="http://coronavirusapi.com/getTimeSeries/<%= @st %>">CSV</a> or <a href="http://coronavirusapi.com/getTimeSeriesJson/<%= @st %>">JSON</a>
-</p>
-<p>
-<h4>Donate:</h4>
-<p>
-BTC: 1LG9dUf39dCKAEFcKm6guNhadTJwNqj44J
-</p><p>
-BCH: qrf504gk8n6sujjegwastxqdz2lv5vlv65pxs03s7k
-</p><p>
-ETH: 0x549ffFB83ac67Ca1Ae47668ac3cAAE3e0c77a9bd
-</p><p>
-XLM: GCVRV67LBHTMVXKDAJSW3S3ASASI6EJWQU2LYEOGKPSJEY42PYRAUDME
-</p><p>
-VET: 0xa81cd7a8272E053A18a13459425FFd260105EDd9
-</p>
-</p>
+<section class="text">
+	<p>
+	<h4>Api:</h4>
+	To get the time series for <%= @st %>, use <a href="http://coronavirusapi.com/getTimeSeries/<%= @st %>">CSV</a> or <a href="http://coronavirusapi.com/getTimeSeriesJson/<%= @st %>">JSON</a>
+	</p>
+	<p>
+	<h4>Donate:</h4>
+	<p>
+	BTC: 1LG9dUf39dCKAEFcKm6guNhadTJwNqj44J
+	</p><p>
+	BCH: qrf504gk8n6sujjegwastxqdz2lv5vlv65pxs03s7k
+	</p><p>
+	ETH: 0x549ffFB83ac67Ca1Ae47668ac3cAAE3e0c77a9bd
+	</p><p>
+	XLM: GCVRV67LBHTMVXKDAJSW3S3ASASI6EJWQU2LYEOGKPSJEY42PYRAUDME
+	</p><p>
+	VET: 0xa81cd7a8272E053A18a13459425FFd260105EDd9
+	</p>
+	</p>
+</section>

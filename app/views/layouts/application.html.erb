@@ -26,20 +26,25 @@
 </head>
 
 <body>
-<input type="checkbox" id="menu">
-<label class="menu-opener" for="menu" onclick></label>
 
-  <div class="main-nav">
-    <nav role="off-canvas">
-      <a href="/">Home</a>
-      <a href="/about">About Us</a>
-      <a href="/faq">FAQ</a>
-      <a href="/media">Media</a>
-      <a href="/legal">Legal Notices</a>
-    </nav>
-  </div>
+<nav class="navigation">
+  <%# TODO: these should not be inlined - see https://cobwwweb.com/render-inline-svg-rails-middleman for information on resolving%>
+  <button aria-expanded="false" aria-controls="menu">
+    <svg class="bi bi-list" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+      <path fill-rule="evenodd" d="M2.5 11.5A.5.5 0 013 11h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5zm0-4A.5.5 0 013 7h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5zm0-4A.5.5 0 013 3h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5z" clip-rule="evenodd"/>
+    </svg>  </button>
+
+  <ul id="menu" hidden>
+    <li><a href="/" class="logo <%if request.path == '/' %> active <% end %>">CoronavirusAPI</a></li>
+    <li><a href="usage" class="<%if request.path == '/usage' %> active <% end %>">Usage</a></li>
+    <li><a href="faq" class="<%if request.path == '/faq' %> active <% end %>">FAQ</a></li>
+    <li><a href="about" class="<%if request.path == '/about' %> active <% end %>">Team</a></li>
+    <li><a href="media" class="<%if request.path == '/media' %> active <% end %>">Media</a></li>
+    <li><a href="donate" class="<%if request.path == '/donate' %> active <% end %>">Donate</a></li>
+    <li><a href="legal" class="<%if request.path == '/legal' %> active <% end %>">Legal Notices</a></li>
+  </ul>
+</nav>
   <div class="main-content">
-    <h1 class="main-header"> Coronavirus API Public Health Initiative</h1>
     <%= yield %>
   </div>
 
